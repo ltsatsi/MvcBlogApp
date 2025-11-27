@@ -1,0 +1,45 @@
+﻿@model IEnumerable<MyBlogApplication.Models.Blog>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h4>Blog Posts</h4>
+<hr />
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div>
+    <form asp-action="Index" method="get">
+        Search blog post by title:
+        <input type="text" name="SearchInput" value="@ViewData["CurrentSearch"]"/>
+        <input type="submit" value="Search" class="btn btn-default" />
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
+<div class="container mt-4">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">By @item.Author</h6>
+
+                        <p class="card-text">
+                            <strong>Category:</strong> @item.Category<br />
+                            <strong>Summary:</strong> @item.Summary
+                        </p>
+
+                        <a asp-action="Details" asp-route-id="@item.BlogId" class="card-link">Details</a>
+                        <a asp-action="Edit" asp-route-id="@item.BlogId" class="card-link">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.BlogId" class="card-link">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

@@ -1,0 +1,58 @@
+# ==========================
+# Visual Studio / .NET Core
+# ==========================
+
+## Ignore Visual Studio temporary files, build results, and
+## user-specific files
+# Visual Studio local settings
+.vs/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+*.log
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# ASP.NET Core / IIS
+wwwroot/
+appsettings*.json
+*.db
+
+# Entity Framework
+*.edmx
+*.sqlite
+*.db
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user

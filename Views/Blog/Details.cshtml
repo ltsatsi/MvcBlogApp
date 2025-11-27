@@ -1,0 +1,47 @@
+﻿@model MyBlogApplication.Models.Blog
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h4>Details</h4>
+<hr />
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">@Model.Title</h4>
+        </div>
+
+        <div class="card-body">
+            <h6 class="text-muted mb-3">By @Model.Author</h6>
+
+            <div class="mb-3">
+                <strong>Category:</strong>
+                <div class="text-secondary">@Model.Category</div>
+            </div>
+
+            <div class="mb-3">
+                <strong>Summary:</strong>
+                <div>@Model.Summary</div>
+            </div>
+
+            <div>
+                <img src="@Model.ImageUrl" class="img-fluid"/>
+            </div>
+
+            <div class="mb-3">
+                <strong>Content:</strong>
+                <p class="mt-1">
+                    @Html.Raw(Model.Content)
+                </p>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between">
+            <a asp-action="Edit" asp-route-id="@Model?.BlogId" class="btn btn-warning btn-sm">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">Back to List</a>
+        </div>
+    </div>
+</div>
+
