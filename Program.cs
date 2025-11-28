@@ -18,6 +18,7 @@ namespace MyBlogApplication
             // Register DI
             builder.Services.AddScoped<IDBInitialiser, DBInitialisers>();
             builder.Services.AddScoped<IBlogRepo, BlogRepo>();
+            builder.Services.AddScoped<ICommentRepo, CommentRepo>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

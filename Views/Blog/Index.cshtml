@@ -1,4 +1,5 @@
-﻿@model IEnumerable<MyBlogApplication.Models.Blog>
+﻿@using MyBlogApplication.Infrastructure
+@model PaginatedList<MyBlogApplication.Models.Blog>
 
 @{
     ViewData["Title"] = "Index";
@@ -29,10 +30,11 @@
         {
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-header">
                         <h5 class="card-title">@item.Title</h5>
                         <h6 class="card-subtitle mb-2 text-muted">By @item.Author <span class="fs-6">@item.CreatedAt</span></h6>
-
+                    </div>
+                    <div class="card-body">
                         <div>
                             <img src="@item.ImageUrl" class="img-fluid"/> 
                         </div>
@@ -41,7 +43,6 @@
                             <strong>Category:</strong> @item.Category<br />
                             <strong>Summary:</strong> @item.Summary
                         </p>
-
                     </div>
                     <div class="card-footer">
                         <a asp-action="Details" asp-route-id="@item.BlogId" class="card-link">Details</a>
@@ -51,6 +52,24 @@
                 </div>
             </div>
         }
+    </div>
+
+    @{
+        var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    }
+
+    <div class="d-flex justify-content-end gap-2">
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn btn-outline-secondary @prevDisabled">Previous</a>
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn btn-outline-secondary @nextDisabled">Next</a>
     </div>
 </div>
 

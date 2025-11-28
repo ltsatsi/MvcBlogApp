@@ -14,8 +14,8 @@ namespace MyBlogApplication.Repositories
         }
         public async Task<Blog> CreateBlogAsync(Blog blog)
         {
-            await _context.Blogs.AddAsync(blog);   
-            _context.SaveChanges();
+            await _context.Blogs.AddAsync(blog);
+            await _context.SaveChangesAsync();
 
             return blog;
         }
@@ -23,14 +23,14 @@ namespace MyBlogApplication.Repositories
         public async Task<Blog> DeleteBlogAsync(Blog blog)
         {
             _context.Blogs.Remove(blog);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return blog;
         }
 
         public async Task<IEnumerable<Blog>> GetAllBlogsAsync(string searchInput, string sortOrder)
         {
-            var blogs = await _context.Blogs.ToListAsync();
+            var blogs = await _context.Blogs.Include(b => b.Comments).ToListAsync();
             if (!string.IsNullOrEmpty(searchInput))
             {
                 blogs = blogs.Where(b => b.Title.ToLower().Contains(searchInput.ToLower())).ToList();
@@ -55,7 +55,9 @@ namespace MyBlogApplication.Repositories
 
         public async Task<Blog> GetBlogByIdAsync(int id)
         {
-            var blog = await _context.Blogs.FirstOrDefaultAsync(p => p.BlogId == id);
+            var blog = await _context.Blogs
+                .Include(b => b.Comments)
+                .FirstOrDefaultAsync(p => p.BlogId == id);
             return blog;
         }
 
@@ -75,7 +77,7 @@ namespace MyBlogApplication.Repositories
         public async Task<Blog> UpdateBlogAsync(Blog blog)
         {
             _context.Blogs.Update(blog);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return blog;
         }

@@ -39,5 +39,9 @@ namespace MyBlogApplication.Models
 
         [Display(Name = "Date Published")]
         public DateTime CreatedAt { get; } = DateTime.Now;
+
+
+        // Relationship navigation
+        public List<Comment> Comments { get; set; } = new();
     }
 }

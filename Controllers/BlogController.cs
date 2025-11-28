@@ -1,26 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MyBlogApplication.Infrastructure;
 using MyBlogApplication.Interfaces;
 using MyBlogApplication.Models;
+using MyBlogApplication.Repositories;
 
 namespace MyBlogApplication.Controllers
 {
     public class BlogController : Controller
     {
+        private readonly ICommentRepo _commentRepo;
         private readonly IBlogRepo _blogRepo;
-        public BlogController(IBlogRepo blogRepo)
+        public BlogController(IBlogRepo blogRepo, ICommentRepo commentRepo)
         {
             _blogRepo = blogRepo;
+            _commentRepo = commentRepo;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string searchInput, string sortOrder, string currentFilter)
+        public async Task<IActionResult> Index(string searchInput, string sortOrder, string currentFilter, int? pageNumber)
         {
+            pageNumber = pageNumber ?? 1;
+            int pageSize = 3;
             ViewData["CurrentSort"] = sortOrder;
             ViewData["CategorySortParam"] = String.IsNullOrEmpty(sortOrder) ? "category_desc" : "";
             ViewData["TitleSortParam"]= String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
             ViewData["DateSortParam"] = sortOrder == "Date" ? "date_desc" : "Date";
 
-            if (searchInput is null)
+            if (searchInput != null)
+            {
+                pageNumber = 1;
+            } 
+            else 
             {
                 searchInput = currentFilter;
             }
@@ -29,7 +39,7 @@ namespace MyBlogApplication.Controllers
 
 
             ViewData["CurrentSearch"] = searchInput;
-            return View(await _blogRepo.GetAllBlogsAsync(searchInput, sortOrder));
+            return View(PaginatedList<Blog>.Create(await _blogRepo.GetAllBlogsAsync(searchInput, sortOrder), pageNumber ?? 1, pageSize));
         }
 
         [HttpGet]
@@ -128,6 +138,26 @@ namespace MyBlogApplication.Controllers
             ViewBag.SuccessMessage = $"Blog post \'{blog.Title}\' successfully deleted.";
             await _blogRepo.DeleteBlogAsync(blog);
             return View(blog);
+        }
+
+
+        [HttpPost]  
+        public async Task<IActionResult> AddComment(int blogId, string authorName, string content)
+        {
+            var blog = await _blogRepo.GetBlogByIdAsync(blogId);
+
+            if (blog == null)
+                return NotFound("Blog not found");
+
+            Comment commnent = new Comment()
+            {
+                    BlogId = blogId,
+                    AuthorName = authorName,
+                    Content = content
+            };
+
+                await _commentRepo.CreateCommentAsync(commnent);
+                return RedirectToAction("Details", new { id = blogId });
         }
     }
 }

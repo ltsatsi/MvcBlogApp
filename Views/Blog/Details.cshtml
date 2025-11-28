@@ -38,9 +38,52 @@
             </div>
         </div>
 
-        <div class="card-footer d-flex justify-content-between">
-            <a asp-action="Edit" asp-route-id="@Model?.BlogId" class="btn btn-warning btn-sm">Edit</a>
-            <a asp-action="Index" class="btn btn-secondary btn-sm">Back to List</a>
+        <div class="card-footer">
+            <a asp-action="Edit" asp-route-id="@Model?.BlogId">Edit</a>
+            <a asp-action="Index">Back to List</a>
+        </div>
+    </div>
+    <h4>Comments</h4>
+    @if (Model.Comments.Any())
+    {
+        @foreach (Comment comment in Model.Comments)
+        {
+            <div class="bg-light my-2 p-2 border-bottom">
+
+                <p class="text-secondary">
+                    @comment.AuthorName • @comment.CreatedAt.ToShortDateString()
+                </p>
+                <p>
+                    @comment.Content
+                </p>
+            </div>
+        }
+    } else
+    {
+        <div class="p-3">
+            <em>No Comments yet. Be the first to comment!</em>
+        </div>
+    }
+    <div class="card">
+        <div class="card-body">
+            <h4>Add Comment</h4>
+            <form asp-action="AddComment" method="post">
+                <input type="hidden" name="blogId" value="@Model.BlogId" />
+
+
+                <div class="mt-2">
+                    <label>Author Name</label>
+                    <input type="text" name="authorName" class="form-control" />
+                </div>
+
+                <div class="mt-2">
+                    <label>Comment</label>
+                    <textarea name="content" class="form-control"></textarea>
+                </div>
+
+                <input type="submit" value="Add" class="btn btn-primary mt-2" />
+
+            </form>
         </div>
     </div>
 </div>
