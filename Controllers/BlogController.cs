@@ -13,10 +13,23 @@ namespace MyBlogApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string searchInput)
+        public async Task<IActionResult> Index(string searchInput, string sortOrder, string currentFilter)
         {
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["CategorySortParam"] = String.IsNullOrEmpty(sortOrder) ? "category_desc" : "";
+            ViewData["TitleSortParam"]= String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewData["DateSortParam"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            if (searchInput is null)
+            {
+                searchInput = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchInput;
+
+
             ViewData["CurrentSearch"] = searchInput;
-            return View(await _blogRepo.GetAllBlogsAsync(searchInput));
+            return View(await _blogRepo.GetAllBlogsAsync(searchInput, sortOrder));
         }
 
         [HttpGet]

@@ -28,12 +28,27 @@ namespace MyBlogApplication.Repositories
             return blog;
         }
 
-        public async Task<IEnumerable<Blog>> GetAllBlogsAsync(string searchInput)
+        public async Task<IEnumerable<Blog>> GetAllBlogsAsync(string searchInput, string sortOrder)
         {
             var blogs = await _context.Blogs.ToListAsync();
             if (!string.IsNullOrEmpty(searchInput))
             {
                 blogs = blogs.Where(b => b.Title.ToLower().Contains(searchInput.ToLower())).ToList();
+            }
+            switch (sortOrder)
+            {
+                case "category_desc":
+                    blogs = blogs.OrderByDescending(b => b.Category).ToList();
+                    break;
+                case "title_desc":
+                    blogs = blogs.OrderByDescending(b => b.Title).ToList();
+                    break;
+                case "date_desc":
+                    blogs = blogs.OrderByDescending(b => b.CreatedAt).ToList();
+                    break;
+                default:
+                    blogs = blogs.OrderBy(b => b.CreatedAt).ToList();
+                    break;
             }
             return blogs;
         }
