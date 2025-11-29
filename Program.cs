@@ -11,14 +11,15 @@ namespace MyBlogApplication
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Register EF
+            // Register Entity Framework ORM
             builder.Services.AddDbContext<AppDBContext>(options =>
             options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // Register DI
+            // Register Dependency Injection
             builder.Services.AddScoped<IDBInitialiser, DBInitialisers>();
             builder.Services.AddScoped<IBlogRepo, BlogRepo>();
             builder.Services.AddScoped<ICommentRepo, CommentRepo>();
+            builder.Services.AddScoped<IImageUpload, ImageUpload>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

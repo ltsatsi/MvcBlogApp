@@ -10,10 +10,12 @@ namespace MyBlogApplication.Controllers
     {
         private readonly ICommentRepo _commentRepo;
         private readonly IBlogRepo _blogRepo;
-        public BlogController(IBlogRepo blogRepo, ICommentRepo commentRepo)
+        private readonly IImageUpload _imageUpload;
+        public BlogController(IBlogRepo blogRepo, ICommentRepo commentRepo, IImageUpload imageUpload)
         {
             _blogRepo = blogRepo;
             _commentRepo = commentRepo;
+            _imageUpload = imageUpload;
         }
 
         [HttpGet]
@@ -50,30 +52,11 @@ namespace MyBlogApplication.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create(Blog blog, IFormFile imageFile)
+        public async Task<IActionResult> Create(Blog blog, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
-                // upload images
-                var folder = Path.Combine("wwwroot", "images", "posts");
-                if (!Directory.Exists(folder))
-                {
-                    Directory.CreateDirectory(folder);
-                }
-
-                // file processing
-                var fileName = $"{Guid.NewGuid()}_{imageFile.FileName}";
-                var filePath = Path.Combine(folder, fileName);
-
-                // file processing
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(stream);
-                }
-
-                // Set image url
-                blog.ImageUrl = $"/images/posts/{fileName}";
-
+                blog.ImageUrl = await _imageUpload.UploadImageAsync(imageFile, "images/posts");
                 ViewBag.SuccessMessage = $"Blog post \'{blog.Title}\' successfully created.";
                 await _blogRepo.CreateBlogAsync(blog);
 
@@ -98,30 +81,20 @@ namespace MyBlogApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Blog blog, IFormFile imageFile)
+        public async Task<IActionResult> Edit(Blog blog, IFormFile? imageFile)
         {
-            // upload images
-            var folder = Path.Combine("wwwroot", "images", "posts");
-            if (!Directory.Exists(folder))
+            if (ModelState.IsValid)
             {
-                Directory.CreateDirectory(folder);
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    blog.ImageUrl = await _imageUpload.UploadImageAsync(imageFile, "images/posts");
+                }
+                ViewBag.SuccessMessage = $"Blog post \'{blog.Title}\' successfully updated.";
+                await _blogRepo.UpdateBlogAsync(blog);
+
+                return View(blog);
             }
 
-            // file processing
-            var fileName = $"{Guid.NewGuid()}_{imageFile.FileName}";
-            var filePath = Path.Combine(folder, fileName);
-
-            // file processing
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await imageFile.CopyToAsync(stream);
-            }
-
-            // Set image url
-            blog.ImageUrl = $"/images/posts/{fileName}";
-
-            ViewBag.SuccessMessage = $"Blog post \'{blog.Title}\' successfully updated.";
-            await _blogRepo.UpdateBlogAsync(blog);
             return View(blog);
         }
 
@@ -155,9 +128,9 @@ namespace MyBlogApplication.Controllers
                     AuthorName = authorName,
                     Content = content
             };
-
-                await _commentRepo.CreateCommentAsync(commnent);
-                return RedirectToAction("Details", new { id = blogId });
+            
+            await _commentRepo.CreateCommentAsync(commnent);
+            return RedirectToAction("Details", new { id = blogId });
         }
     }
 }
