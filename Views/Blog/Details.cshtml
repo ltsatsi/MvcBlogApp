@@ -49,10 +49,12 @@
         @foreach (Comment comment in Model.Comments)
         {
             <div class="bg-light my-2 p-2 border-bottom">
-
-                <p class="text-secondary">
-                    @comment.AuthorName • @comment.CreatedAt.ToShortDateString()
-                </p>
+                <div class="d-flex justify-content-between">
+                    <p class="text-secondary">
+                        @comment.AuthorName • @comment.CreatedAt.ToShortDateString()
+                    </p>
+                    <a asp-action="Delete" asp-controller="Comment" asp-route-id="@comment.CommentId">Delete</a>
+                </div>
                 <p>
                     @comment.Content
                 </p>

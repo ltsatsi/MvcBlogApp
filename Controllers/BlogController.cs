@@ -47,6 +47,7 @@ namespace MyBlogApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            ViewBag.ShowButton = true;
             return View(new Blog());
         }
 
@@ -56,6 +57,7 @@ namespace MyBlogApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                ViewBag.ShowButton = false;
                 blog.ImageUrl = await _imageUpload.UploadImageAsync(imageFile, "images/posts");
                 ViewBag.SuccessMessage = $"Blog post \'{blog.Title}\' successfully created.";
                 await _blogRepo.CreateBlogAsync(blog);
@@ -76,6 +78,7 @@ namespace MyBlogApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
+            ViewBag.ShowButton = true;
             var model = await _blogRepo.GetBlogByIdAsync(id);
             return View(model);
         }
@@ -85,6 +88,7 @@ namespace MyBlogApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                ViewBag.ShowButton = false;
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     blog.ImageUrl = await _imageUpload.UploadImageAsync(imageFile, "images/posts");
@@ -101,6 +105,7 @@ namespace MyBlogApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
+            ViewBag.ShowButton = true;
             var model = await _blogRepo.GetBlogByIdAsync(id);
             return View(model);
         }
@@ -108,6 +113,7 @@ namespace MyBlogApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Blog blog)
         {
+            ViewBag.ShowButton = false;
             ViewBag.SuccessMessage = $"Blog post \'{blog.Title}\' successfully deleted.";
             await _blogRepo.DeleteBlogAsync(blog);
             return View(blog);
@@ -117,19 +123,24 @@ namespace MyBlogApplication.Controllers
         [HttpPost]  
         public async Task<IActionResult> AddComment(int blogId, string authorName, string content)
         {
-            var blog = await _blogRepo.GetBlogByIdAsync(blogId);
-
-            if (blog == null)
-                return NotFound("Blog not found");
-
-            Comment commnent = new Comment()
+            if (ModelState.IsValid)
             {
+                var blog = await _blogRepo.GetBlogByIdAsync(blogId);
+
+                if (blog == null)
+                    return NotFound("Blog not found");
+
+                Comment commnent = new Comment()
+                {
                     BlogId = blogId,
                     AuthorName = authorName,
                     Content = content
-            };
-            
-            await _commentRepo.CreateCommentAsync(commnent);
+                };
+
+                await _commentRepo.CreateCommentAsync(commnent);
+                return RedirectToAction("Details", new { id = blogId });
+            }
+
             return RedirectToAction("Details", new { id = blogId });
         }
     }

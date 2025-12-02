@@ -28,15 +28,30 @@ namespace MyBlogApplication.Repositories
             return commment;
         }
 
-        public async Task<IEnumerable<Comment>> GetAllCommentsAsync()
+        public async Task<IEnumerable<Comment>> GetAllCommentsAsync(string sortOrder)
         {
             var comments = await _context.Comments.ToListAsync();
+
+            switch (sortOrder)
+            {
+                case "author_name_desc":
+                    comments = comments.OrderByDescending(c => c.AuthorName).ToList();
+                    break;
+                case "date_desc":
+                    comments = comments.OrderByDescending(c => c.CreatedAt).ToList();
+                    break;
+                default:
+                    comments = comments.OrderBy(c => c.CreatedAt).ToList();
+                    break;
+            }
             return comments;
         }
 
         public async Task<Comment> GetCommentByIdAsync(int id)  
         {
-            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.CommentId == id);
+            var comment = await _context.Comments
+                .Include(c => c.Blog)
+                .FirstOrDefaultAsync(c => c.CommentId == id);
             return comment;
         }
 

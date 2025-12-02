@@ -20,7 +20,6 @@ namespace MyBlogApplication.Models
 
 
         [Display(Name = "Date Published")]
-        [Required(ErrorMessage = "Date Published is required.")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
 

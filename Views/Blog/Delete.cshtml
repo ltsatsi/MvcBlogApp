@@ -47,10 +47,14 @@
             @Html.DisplayFor(model => model.Summary)
         </dd>
     </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="BlogId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
+    @if (ViewBag.ShowButton == true)
+    {
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="BlogId" />
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        </form>
+    }
+    <div>
         <a asp-action="Index">Back to List</a>
-    </form>
+    </div>
 </div>
