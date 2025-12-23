@@ -7,11 +7,12 @@
         // Track current and total pages
         public int PageIndex { get; set; }
         public int TotalPages { get; private set; }
-
+        public int TotalCount { get; private set; }
 
         // Non-default constructor
         public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
         {
+            TotalCount = count;
             PageIndex = pageIndex;
             TotalPages = (int)Math.Ceiling(count/(double)pageSize);
 

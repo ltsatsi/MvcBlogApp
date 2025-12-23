@@ -4,7 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
-<h4>Blog</h4>
+<h4>Create Article</h4>
 <hr />
 
 @if (ViewBag.SuccessMessage != null)
@@ -14,49 +14,92 @@
     </div>
 }
 
-<div class="row">
+<div class="row g-5">
     <div class="col-md-8">
         <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Author" class="control-label"></label>
-                <input asp-for="Author" class="form-control" />
-                <span asp-validation-for="Author" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageUrl" class="control-label"></label>
-                <input type="file" name="ImageFile" class="form-control" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="Content" class="form-label"></label>
-                <input type="hidden" asp-for="Content" id="Content" />
-                <div id="quillEditor" style="height: 250px; background: #fff;"></div>
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" />
-                <span asp-validation-for="Category" class="text-danger"></span>
+
+            <div class="d-flex justify-content-between">
+                <h5>Get your keyboard and fingers ready!</h5>
+
+                <!--ACTIONS-->
+                <div class="d-flex align-items-center gap-2">
+                    @if (ViewBag.ShowButton == true)
+                    {
+                        <div class="form-group">
+                            <input type="submit" value="Publish" class="btn btn-success btn-sm" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <input type="submit" value="Publish" class="btn btn-success disabled btn-sm" />
+                        </div>
+                    }
+                    <button type="reset" class="btn btn-default btn-sm"><i class="bi bi-trash"></i></button>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Summary" class="control-label"></label>
-                <input asp-for="Summary" class="form-control" />
-                <span asp-validation-for="Summary" class="text-danger"></span>
+            <hr />
+
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label mb-2"></label>
+                <input asp-for="Title" class="form-control" placeholder="Article title" />
+                <span asp-validation-for="Title" class="text-danger small"></span>
             </div>
-            @if (ViewBag.ShowButton == true)
-            {
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="row mb-3">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label asp-for="ImageUrl" class="control-label mb-2"></label>
+                        <input type="file" name="ImageFile" class="form-control" />
+                        <span class="text-muted small">Atleast 1 featured image is recommended.</span>
+                        <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                    </div>
                 </div>
-            }
+                <div class="col-6">
+                    <div class="form-group">
+                        <label asp-for="Author" class="control-label mb-2"></label>
+                        <input asp-for="Author" class="form-control" placeholder="Article author or your name" />
+                        <span asp-validation-for="Author" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Content" class="control-label mb-2"></label>
+                <input type="hidden" asp-for="Content" id="Content" />
+                <div id="quillEditor" style="height: 250px; background: #fff;" 
+                class="shadow-sm rounded-3"></div>
+                <span asp-validation-for="Content" class="text-danger small"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Category" class="control-label mb-2"></label>
+                <input asp-for="Category" class="form-control" placeholder="e.g. Innovation" />
+                <span class="text-muted small">One-word catergories are recommended.</span>
+                <span asp-validation-for="Category" class="text-danger small"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="Summary" class="control-label mb-2"></label>
+                <textarea asp-for="Summary" rows="4" class="form-control" placeholder="Article summary goes here..." ></textarea>
+                <span class="text-muted small">Summaries are often used as abouts for articles.</span>
+                <span asp-validation-for="Summary" class="text-danger small"></span>
+            </div>
         </form>
+    </div>
+    <div class="col-md-4">
+        <div class="card border alert alert-info">
+            <div class="card-body">
+                <h5>Publishing Tips</h5>
+                <p>Write clear titles, keep content structured, and preview your formatting before publishing. Microsoft Developer use clean, accessible writting.</p>
+            
+                <h5>Recommendations</h5>
+                <ul>
+                    <li>At least 1 image is recommended</li>
+                    <li>Summary should be under 200 chars</li>
+                    <li>Use descriptive headers in content</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -70,10 +113,10 @@
 <script>
     var quill = new Quill('#quillEditor', {
         theme: 'snow',
-        placeholder: 'Write your blog content here...',
+        placeholder: 'Start writing your article here, you can add mentions...',
         modules: {
             toolbar: [
-                [{ header: [1, 2, 3, false] }],
+                [{ header: [1, 2, 3, 4, false] }],
                 ['bold', 'italic', 'underline'],
                 [{ list: 'ordered' }, { list: 'bullet' }],
                 ['link', 'blockquote', 'code-block'],
@@ -99,3 +142,4 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+ 

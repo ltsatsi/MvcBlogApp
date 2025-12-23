@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyBlogApplication.Infrastructure;
 using MyBlogApplication.Interfaces;
 using MyBlogApplication.Models;
@@ -15,16 +16,18 @@ namespace MyBlogApplication.Controllers
         {
             _commentRepo = commentRepo;
         }
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(string sortOrder, int? pageNumber)
         {
-            int pageSize = 6;
+            int pageSize = 8;
             ViewData["CurrentSort"] = sortOrder;
             ViewData["AuthorNameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "author_name_desc" : "";
             ViewData["CreatedAtSortParam"] = sortOrder == "Date" ? "date_desc" : "Date";
             return View(PaginatedList<Comment>.Create(await _commentRepo.GetAllCommentsAsync(sortOrder), pageNumber ?? 1, pageSize));
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             ViewBag.ShowButton = true;
@@ -32,13 +35,13 @@ namespace MyBlogApplication.Controllers
             return View(model);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Comment comment)
         {
             ViewBag.ShowButton = false;
             ViewBag.SuccessMessage = $"Comment successfully deleted.";
             await _commentRepo.DeleteCommentAsync(comment);
-            return View(comment);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

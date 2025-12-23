@@ -1,9 +1,11 @@
-﻿using MyBlogApplication.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using MyBlogApplication.Data;
+using MyBlogApplication.Models;
 
 namespace MyBlogApplication.Interfaces
 {
     public interface IDBInitialiser
     {
-        void Initialise(AppDBContext context);
+        Task InitialiseAsync(AppDBContext context, UserManager<ApplicationUser> userManager);
     }
 }

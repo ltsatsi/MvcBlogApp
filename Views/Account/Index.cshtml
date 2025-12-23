@@ -1,0 +1,33 @@
+﻿@model IEnumerable<MyBlogApplication.ViewModel.UserViewModel>
+
+@{
+	ViewData["Title"] = "Users";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>List of all application users.</h4>
+<hr />
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>@Html.DisplayNameFor(m => m.FirstName)</th>
+			<th>@Html.DisplayNameFor(m => m.LastName)</th>
+			<th>@Html.DisplayNameFor(m => m.RoleName)</th>
+			<th>@Html.DisplayNameFor(m => m.Email)</th>
+			<th>@Html.DisplayNameFor(m => m.CreatedOn)</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>@item.FirstName</td>
+				<td>@item.LastName</td>
+				<td>@(item.RoleName ?? "<None>")</td>
+				<td><a href="mailto:@item.Email">@item.Email</a></td>
+				<td>@item.CreatedOn</td>
+			</tr>
+		}
+	</tbody>
+</table>

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyBlogApplication.Models
 {
@@ -8,14 +9,11 @@ namespace MyBlogApplication.Models
         public int BlogId { get; set; }
 
 
-        [Display(Name = "Title")]
+        [Display(Name = "Article Title")]
         [Required(ErrorMessage = "Blog title is required.")]
+        [StringLength(maximumLength: 200, MinimumLength = 3, 
+            ErrorMessage = "Blog title cannot exceed 200 characters and must be atleast 3 characters long.")]
         public string Title { get; set; }
-
-
-        [Display(Name = "Author")]
-        [Required(ErrorMessage = "Blog author is required.")]
-        public string Author { get; set; }
 
 
         [Display(Name = "Content")]
@@ -25,6 +23,8 @@ namespace MyBlogApplication.Models
 
         [Display(Name = "Category")]
         [Required(ErrorMessage = "Blog category is required.")]
+        [StringLength(maximumLength: 15, MinimumLength = 3,
+            ErrorMessage = "Category cannot exceed 15 characters and must be atleast 3 characters long.")]
         public string Category { get; set; }
 
 
@@ -38,10 +38,16 @@ namespace MyBlogApplication.Models
 
 
         [Display(Name = "Date Published")]
-        public DateTime CreatedAt { get; } = DateTime.Now;
+        public DateTime CreatedAt { get; private set; } = DateTime.Now;
 
 
         // Relationship navigation
-        public List<Comment> Comments { get; set; } = new();
+        [Column("AuthorId")]
+        public Guid AuthorId { get; set; }
+
+        [ForeignKey(nameof(AuthorId))]
+        public ApplicationUser? Author { get; set; }
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
     }
 }

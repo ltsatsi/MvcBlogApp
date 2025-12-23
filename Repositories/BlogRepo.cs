@@ -28,9 +28,12 @@ namespace MyBlogApplication.Repositories
             return blog;
         }
 
-        public async Task<IEnumerable<Blog>> GetAllBlogsAsync(string searchInput, string sortOrder)
+        public async Task<IEnumerable<Blog>> GetAllBlogsAsync(string searchInput = "", string sortOrder = "")
         {
-            var blogs = await _context.Blogs.Include(b => b.Comments).ToListAsync();
+            var blogs = await _context.Blogs
+                .Include(b => b.Comments)
+                .ThenInclude(b => b.Author)
+                .ToListAsync();
             if (!string.IsNullOrEmpty(searchInput))
             {
                 blogs = blogs.Where(b => b.Title.ToLower().Contains(searchInput.ToLower())).ToList();
@@ -57,6 +60,7 @@ namespace MyBlogApplication.Repositories
         {
             var blog = await _context.Blogs
                 .Include(b => b.Comments)
+                .ThenInclude(b => b.Author)
                 .FirstOrDefaultAsync(p => p.BlogId == id);
             return blog;
         }

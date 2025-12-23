@@ -1,0 +1,157 @@
+﻿@using MyBlogApplication.ViewModel
+@model AdminDashboardViewModel
+
+@{
+	ViewData["Title"] = "Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mt-4">
+	<div>
+		<h4>Admin @ViewData["Title"]</h4>
+		<p class="small text-muted">Blog administration & moderation</p>
+	</div>
+	<form asp-action="DetailsForm" asp-controller="Blog" method="post">
+		<div class="d-flex gap-2">
+			<input type="number" id="id" name="id" required class="form-control" placeholder="Find article by id.." />
+			<button type="submit" class="btn btn-primary">Find</button>
+		</div>
+	</form>
+</div>
+
+<div>
+	<!-- Head section -->
+	<div class="row mt-4">
+		<!--Col 1-->
+		<div class="col">
+			<div class="card">
+				<div class="card-body">
+					<h6 class="text-secondary">Article Posts</h6>
+					<h4>@Model?.Blogs.TotalCount</h4>
+
+					<a asp-action="Index" asp-controller="Blog">View All</a>
+				</div>
+			</div>
+		</div>
+
+		<!--Col 2-->
+		<div class="col">
+			<div class="card">
+				<div class="card-body">
+					<h6 class="text-secondary">Comments</h6>
+					<h4>@Model?.Comments.TotalCount</h4>
+
+					<a asp-action="Index" asp-controller="Comment">View All</a>
+				</div>
+			</div>
+		</div>
+
+		<!--Col 3-->
+		<div class="col">
+			<div class="card">
+				<div class="card-body">
+					<h6 class="text-secondary">Users</h6>
+					<h4>@Model?.UserCount</h4>
+
+					<a asp-action="Index" asp-controller="Account">View All</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Body section -->
+	<div class="row mt-4">
+
+		<!--Col 1-->
+		<div class="col-8">
+			<!-- Blog Posts Table -->
+			<div class="card shadow-sm my-4">
+				<div class="card-header bg-white fw-semibold">Latest Articles</div>
+				<div class="table-responsive">
+					<table class="table table-hover mb-0">
+						<thead class="table-light">
+							<tr>
+								<th>Image</th>
+								<th>Title</th>
+								<th>Author</th>
+								<th>Status</th>
+								<th>Date</th>
+								<th class="text-end">Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							@foreach (var item in Model.Blogs)
+							{
+								<tr>
+									<td>
+										<img src="@item.ImageUrl" width="80" class="img-fluid rounded-3" />
+									</td>
+									<td class="text-truncate" style="max-width:150px">@item.Title</td>
+									<td>@item.Author</td>
+									<td><span class="badge bg-success">Published</span></td>
+									<td>@item.CreatedAt.ToString("MMM dd, yyyy")</td>
+									<td class="text-end">
+										<a asp-action="DetailsDefault" asp-controller="Blog" asp-route-id="@item.BlogId">Details</a> |
+										<a asp-action="Delete" asp-controller="Blog" asp-route-id="@item.BlogId">Delete</a>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+
+			<!-- Comment Posts Table -->
+			<div class="card shadow-sm my-4">
+				<div class="card-header bg-white fw-semibold">Recent Comments</div>
+				<div class="table-responsive">
+					<table class="table table-hover mb-0">
+						<thead class="table-light">
+							<tr>
+								<th>Author</th>
+								<th>Content</th>
+								<th>Status</th>
+								<th>Date</th>
+								<th class="text-end">Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							@foreach (var item in Model.Comments)
+							{
+								<tr>
+									<td>@item.Author</td>
+									<td class="text-truncate" style="max-width:150px">@item.Content...</td>
+									<td><span class="badge bg-success">Published</span></td>
+									<td>@item.CreatedAt.ToString("MMM dd, yyyy")</td>
+									<td class="text-end">
+										<a asp-action="DetailsDefault" asp-controller="Blog" asp-route-id="@item.BlogId">Details</a> |
+										<a asp-action="Delete" asp-controller="Comment" asp-route-id="@item.CommentId">Delete</a>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+
+		<!--Col 2-->
+		<div class="col-4 mt-4">
+			<div class="card rounded-3">
+				<div class="card-footer bg-white border-0 border-bottom">
+					<h6>Quick Actions</h6>
+				</div>
+				<div class="card-body">
+					<div class="card-body d-grid gap-2">
+						<a asp-action="Create" asp-controller="Blog" class="btn btn-primary"><i class="bi bi-pencil-square me-1"></i>Editiors Page</a>
+						<a asp-action="Index" asp-controller="Account" class="btn btn-outline-secondary"><i class="bi bi-people me-1"></i>Manage Users</a>
+						<a asp-action="Privacy" asp-controller="Home" class="btn btn-outline-dark"><i class="bi bi-shield-lock me-1"></i>Moderation Rules</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

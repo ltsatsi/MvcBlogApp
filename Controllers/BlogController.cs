@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using MyBlogApplication.Infrastructure;
 using MyBlogApplication.Interfaces;
 using MyBlogApplication.Models;
@@ -6,23 +9,31 @@ using MyBlogApplication.Repositories;
 
 namespace MyBlogApplication.Controllers
 {
+    [Route("blog"), Authorize]
     public class BlogController : Controller
     {
         private readonly ICommentRepo _commentRepo;
         private readonly IBlogRepo _blogRepo;
         private readonly IImageUpload _imageUpload;
-        public BlogController(IBlogRepo blogRepo, ICommentRepo commentRepo, IImageUpload imageUpload)
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public BlogController(
+            IBlogRepo blogRepo, 
+            ICommentRepo commentRepo, 
+            IImageUpload imageUpload,
+            UserManager<ApplicationUser> userManager)
         {
             _blogRepo = blogRepo;
             _commentRepo = commentRepo;
             _imageUpload = imageUpload;
+            _userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet("")]
         public async Task<IActionResult> Index(string searchInput, string sortOrder, string currentFilter, int? pageNumber)
         {
             pageNumber = pageNumber ?? 1;
-            int pageSize = 3;
+            int pageSize = 4;
             ViewData["CurrentSort"] = sortOrder;
             ViewData["CategorySortParam"] = String.IsNullOrEmpty(sortOrder) ? "category_desc" : "";
             ViewData["TitleSortParam"]= String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
@@ -44,22 +55,22 @@ namespace MyBlogApplication.Controllers
             return View(PaginatedList<Blog>.Create(await _blogRepo.GetAllBlogsAsync(searchInput, sortOrder), pageNumber ?? 1, pageSize));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Create()
+        [HttpGet("create"), Authorize(Roles = "Editor")]
+        public IActionResult Create()
         {
             ViewBag.ShowButton = true;
             return View(new Blog());
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Create(Blog blog, IFormFile? imageFile)
+        [HttpPost("create"), Authorize(Roles = "Editor")]
+        public async Task<IActionResult> Create(Blog blog, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
                 ViewBag.ShowButton = false;
                 blog.ImageUrl = await _imageUpload.UploadImageAsync(imageFile, "images/posts");
-                ViewBag.SuccessMessage = $"Blog post \'{blog.Title}\' successfully created.";
+                ViewBag.SuccessMessage = $"Article successfully published.";
                 await _blogRepo.CreateBlogAsync(blog);
 
                 return View(blog);
@@ -68,14 +79,30 @@ namespace MyBlogApplication.Controllers
             return View(blog);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        [HttpGet("details-default/{id}"), Authorize]
+        public async Task<IActionResult> DetailsDefault(int id) 
         {
+            ViewBag.UserId = _userManager.GetUserId(HttpContext.User);
             var model = await _blogRepo.GetBlogByIdAsync(id);
-            return View(model);
+            return View("Details", model);
         }
 
-        [HttpGet]
+        [HttpGet("details-query"), Authorize]
+        public async Task<IActionResult> DetailsQuery([FromQuery(Name = "id")] int id)
+        {
+            ViewBag.UserId = _userManager.GetUserId(HttpContext.User);
+            var model = await _blogRepo.GetBlogByIdAsync(id);
+            return View("Details", model);
+        }
+
+        [HttpPost("details-form"), Authorize]
+        public async Task<IActionResult> DetailsForm([FromForm] int id)
+        {
+            var model = await _blogRepo.GetBlogByIdAsync(id);
+            return RedirectToAction(nameof(DetailsDefault), new { id });
+        }
+
+        [HttpGet("edit"), Authorize(Roles = "Editor")]
         public async Task<IActionResult> Edit(int id)
         {
             ViewBag.ShowButton = true;
@@ -83,7 +110,7 @@ namespace MyBlogApplication.Controllers
             return View(model);
         }
 
-        [HttpPost]
+        [HttpPost("edit"), Authorize(Roles = "Editor")]
         public async Task<IActionResult> Edit(Blog blog, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
@@ -93,7 +120,7 @@ namespace MyBlogApplication.Controllers
                 {
                     blog.ImageUrl = await _imageUpload.UploadImageAsync(imageFile, "images/posts");
                 }
-                ViewBag.SuccessMessage = $"Blog post \'{blog.Title}\' successfully updated.";
+                ViewBag.SuccessMessage = $"Article successfully updated.";
                 await _blogRepo.UpdateBlogAsync(blog);
 
                 return View(blog);
@@ -102,7 +129,7 @@ namespace MyBlogApplication.Controllers
             return View(blog);
         }
 
-        [HttpGet]
+        [HttpGet("delete"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             ViewBag.ShowButton = true;
@@ -110,18 +137,18 @@ namespace MyBlogApplication.Controllers
             return View(model);
         }
 
-        [HttpPost]
+        [HttpPost("delete"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Blog blog)
         {
             ViewBag.ShowButton = false;
-            ViewBag.SuccessMessage = $"Blog post \'{blog.Title}\' successfully deleted.";
+            ViewBag.SuccessMessage = $"Blog post successfully deleted.";
             await _blogRepo.DeleteBlogAsync(blog);
             return View(blog);
         }
 
 
-        [HttpPost]  
-        public async Task<IActionResult> AddComment(int blogId, string authorName, string content)
+        [HttpPost, Authorize]  
+        public async Task<IActionResult> AddComment(int blogId, string authorId, string content)
         {
             if (ModelState.IsValid)
             {
@@ -133,15 +160,15 @@ namespace MyBlogApplication.Controllers
                 Comment commnent = new Comment()
                 {
                     BlogId = blogId,
-                    AuthorName = authorName,
+                    AuthorId = Guid.Parse(authorId),
                     Content = content
                 };
 
                 await _commentRepo.CreateCommentAsync(commnent);
-                return RedirectToAction("Details", new { id = blogId });
+                return RedirectToAction(nameof(DetailsDefault), new { id = blogId });
             }
 
-            return RedirectToAction("Details", new { id = blogId });
+            return RedirectToAction(nameof(DetailsDefault), new { id = blogId });
         }
     }
 }

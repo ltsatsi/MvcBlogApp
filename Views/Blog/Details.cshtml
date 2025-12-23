@@ -4,89 +4,143 @@
     ViewData["Title"] = "Details";
 }
 
-<h4>Details</h4>
-<hr />
-
 <div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">@Model.Title</h4>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-1 shadow-sm rounded-3">
+
+                <div class="card-body">
+                    <div>
+                        <p class="small mb-2">
+                            <span class="badge bg-primary p-1">@Model.Category</span>
+                        </p>
+                        <h2 class="mb-0 fw-bold text-dark">@Model.Title</h2>
+
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex align-items-center gap-2 mb-0 mt-1">
+                                <p class="text-secondary">@Model.Author.FirstName @Model.Author.LastName</p>
+                                <p class="text-secondary">@Model.CreatedAt.ToString("MMM d, yyyy")</p>
+                            </div>
+                            <span class="small text-muted"><i class="bi bi-chat-left"></i> @Model.Comments.Count</span>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" class="img-fluid rounded mb-3 shadow-sm" />
+                    }
+
+                    <div class="mb-4">
+                        <article class="mt-2 text-dark lh-base" style="font-size: 1.05rem;">
+                            @Html.Raw(Model.Content)
+                        </article>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white border-top d-flex gap-3">
+                    <a asp-action="Edit" asp-route-id="@Model?.BlogId" class="text-primary fw-semibold">Edit</a>
+                    <a asp-action="Index" class="text-secondary">Back to List</a>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between gap-3 mt-3 ">
+                <h4 class="mt-2 fw-semibold">@(Model?.Comments.Count ?? 0) Comments</h4>
+                <div class="dropdown mt-3 mt-md-0">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                         Sort by
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-start p-3">
+                        <li class="dropdown-item border-0 border-bottom"><a asp-action="">Top Comments</a></li>
+                        <li class="dropdown-item"><a asp-action="">Newest Comments</a></li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <form asp-action="AddComment" method="post">
+                        <div asp-validation-summary="ModelOnly"></div>
+                        <input type="hidden" name="blogId" value="@Model.BlogId" />
+                        <input type="hidden" name="authorId" value="@ViewBag.UserId" />
+
+                        <div class="row mt-2">
+                            <div class="col-9">
+                                <label class="form-label fw-semibold">Comment</label>
+                                <input name="content" class="form-control" placeholder="Write your comment here.."></input>
+                                <span asp-validation-for="Content"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary btn-sm mt-3 px-4">Comment</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+
+            @if (Model.Comments.Any())
+            {
+                <div class="mt-3">
+                    @foreach (Comment comment in Model.Comments)
+                    {
+                        <div class="border-0 border-bottom mt-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="text-dark small">
+                                    <strong>@comment.Author.FirstName @comment.Author.LastName</strong> <span class="text-muted">· @comment.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                </div>
+
+                                <a asp-action="Delete" asp-controller="Comment"
+                                   asp-route-id="@comment.CommentId"
+                                   class="small fw-semibold">Delete</a>
+                            </div>
+
+                            <div class="text-dark mb-2">@comment.Content</div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="p-3 mt-2 text-secondary fst-italic">
+                    No comments yet — be the first to share your thoughts.
+                </div>
+            }
         </div>
 
-        <div class="card-body">
-            <h6 class="text-muted mb-3">By @Model.Author</h6>
+        <div class="col-lg-4 mt-4 mt-lg-0">
 
-            <div class="mb-3">
-                <strong>Category:</strong>
-                <div class="text-secondary">@Model.Category</div>
+            <div class="card border-1 rounded-3 mb-3">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-2 text-dark">About article</h5>
+                    <p class="text-secondary small">@Model.Summary</p>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <strong>Summary:</strong>
-                <div>@Model.Summary</div>
-            </div>
-
-            <div>
-                <img src="@Model.ImageUrl" class="img-fluid"/>
-            </div>
-
-            <div class="mb-3">
-                <strong>Content:</strong>
-                <p class="mt-1">
-                    @Html.Raw(Model.Content)
-                </p>
-            </div>
-        </div>
-
-        <div class="card-footer">
-            <a asp-action="Edit" asp-route-id="@Model?.BlogId">Edit</a>
-            <a asp-action="Index">Back to List</a>
-        </div>
-    </div>
-    <h4>Comments</h4>
-    @if (Model.Comments.Any())
-    {
-        @foreach (Comment comment in Model.Comments)
-        {
-            <div class="bg-light my-2 p-2 border-bottom">
-                <div class="d-flex justify-content-between">
-                    <p class="text-secondary">
-                        @comment.AuthorName • @comment.CreatedAt.ToShortDateString()
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-2 text-dark">Subscribe to our Newsletter</h5>
+                    <p class="text-secondary small">
+                        Get the latest updates, tutorials, and .NET tips delivered to your inbox.
                     </p>
-                    <a asp-action="Delete" asp-controller="Comment" asp-route-id="@comment.CommentId">Delete</a>
+
+                    <form method="post" asp-action="Subscribe">
+                        <div class="mb-2">
+                            <input type="email" name="email" placeholder="Enter your email"
+                                   class="form-control rounded-2" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">
+                            Subscribe
+                        </button>
+                    </form>
                 </div>
-                <p>
-                    @comment.Content
-                </p>
             </div>
-        }
-    } else
-    {
-        <div class="p-3">
-            <em>No Comments yet. Be the first to comment!</em>
+
         </div>
-    }
-    <div class="card">
-        <div class="card-body">
-            <h4>Add Comment</h4>
-            <form asp-action="AddComment" method="post">
-                <input type="hidden" name="blogId" value="@Model.BlogId" />
 
-
-                <div class="mt-2">
-                    <label>Author Name</label>
-                    <input type="text" name="authorName" class="form-control" />
-                </div>
-
-                <div class="mt-2">
-                    <label>Comment</label>
-                    <textarea name="content" class="form-control"></textarea>
-                </div>
-
-                <input type="submit" value="Add" class="btn btn-primary mt-2" />
-
-            </form>
-        </div>
     </div>
 </div>
-

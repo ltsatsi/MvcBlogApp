@@ -8,12 +8,6 @@ namespace MyBlogApplication.Models
         [Key]
         public int CommentId { get; set; }
 
-
-        [Display(Name = "Author Name")]
-        [Required(ErrorMessage = "Author Name is required.")]
-        public string AuthorName { get; set; }
-
-
         [Display(Name = "Comment")]
         [Required(ErrorMessage = "Comment is required.")]
         public string Content { get; set; }
@@ -26,7 +20,15 @@ namespace MyBlogApplication.Models
         // Relationship navigation
         [Column("BlogId")]
         public int BlogId { get; set; }
+
         [ForeignKey(nameof(BlogId))]
         public Blog Blog { get; set; }
+
+
+        [Column("AuthorId")]
+        public Guid AuthorId { get; set; }
+
+        [ForeignKey(nameof(AuthorId))]
+        public ApplicationUser? Author { get; set; }
     }
 }

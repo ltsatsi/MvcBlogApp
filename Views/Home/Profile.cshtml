@@ -1,0 +1,53 @@
+﻿@model MyBlogApplication.ViewModel.UserViewModel
+
+@{
+	ViewData["Title"] = "Profile";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>Logged in user details</h4>
+<hr />
+
+<div class="col-4">
+	<dl class="row">
+
+		<dt hidden class="col-6">
+			@Html.DisplayNameFor(m => m.UserId)
+		</dt>
+		<dd hidden class="col-6">
+			@Model.UserId
+		</dd>
+
+		<dt class="col-6">
+			@Html.DisplayNameFor(m => m.FirstName)
+		</dt>
+		<dd class="col-6">
+			@Model.FirstName
+		</dd>
+
+		<dt class="col-6">
+			@Html.DisplayNameFor(m => m.LastName)
+		</dt>
+		<dd class="col-6">
+			@(Model?.LastName ?? "<None>")
+		</dd>
+
+		<dt class="col-6">
+			@Html.DisplayNameFor(m => m.RoleName)
+		</dt>
+		<dd class="col-6">
+			@(Model?.RoleName ?? "<None>")
+		</dd>
+
+		<dt class="col-6">
+			@Html.DisplayNameFor(m => m.Email)
+		</dt>
+		<dd class="col-6">
+			<a href="mailto:@Model.Email">@Model.Email</a>
+		</dd>
+	</dl>
+</div>
+
+<div>
+	<a asp-action="Index" asp-controller="Home">Back to Home</a>
+</div>

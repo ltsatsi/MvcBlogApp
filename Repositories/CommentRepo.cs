@@ -28,20 +28,23 @@ namespace MyBlogApplication.Repositories
             return commment;
         }
 
-        public async Task<IEnumerable<Comment>> GetAllCommentsAsync(string sortOrder)
+        public async Task<IEnumerable<Comment>> GetAllCommentsAsync(string sortOrder = "")
         {
-            var comments = await _context.Comments.ToListAsync();
+            var comments = await _context.Comments.Include(c => c.Author).ToListAsync();
 
             switch (sortOrder)
             {
                 case "author_name_desc":
-                    comments = comments.OrderByDescending(c => c.AuthorName).ToList();
+                    comments = comments.OrderByDescending(c => c.Author.FirstName).ToList();
                     break;
                 case "date_desc":
                     comments = comments.OrderByDescending(c => c.CreatedAt).ToList();
                     break;
-                default:
+                case "Date":
                     comments = comments.OrderBy(c => c.CreatedAt).ToList();
+                    break;
+                default:
+                    comments = comments.OrderBy(c => c.Author.FirstName).ToList();
                     break;
             }
             return comments;
@@ -51,6 +54,7 @@ namespace MyBlogApplication.Repositories
         {
             var comment = await _context.Comments
                 .Include(c => c.Blog)
+                .ThenInclude(c => c.Author)
                 .FirstOrDefaultAsync(c => c.CommentId == id);
             return comment;
         }
