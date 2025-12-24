@@ -18,6 +18,7 @@
     <div class="col-md-8">
         <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="AuthorId" value="@ViewBag.UserId" />
 
             <div class="d-flex justify-content-between">
                 <h5>Get your keyboard and fingers ready!</h5>
@@ -47,23 +48,14 @@
                 <input asp-for="Title" class="form-control" placeholder="Article title" />
                 <span asp-validation-for="Title" class="text-danger small"></span>
             </div>
-            <div class="row mb-3">
-                <div class="col-6">
-                    <div class="form-group">
-                        <label asp-for="ImageUrl" class="control-label mb-2"></label>
-                        <input type="file" name="ImageFile" class="form-control" />
-                        <span class="text-muted small">Atleast 1 featured image is recommended.</span>
-                        <span asp-validation-for="ImageUrl" class="text-danger small"></span>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="form-group">
-                        <label asp-for="Author" class="control-label mb-2"></label>
-                        <input asp-for="Author" class="form-control" placeholder="Article author or your name" />
-                        <span asp-validation-for="Author" class="text-danger small"></span>
-                    </div>
-                </div>
+
+            <div class="form-group">
+                <label asp-for="ImageUrl" class="control-label mb-2"></label>
+                <input type="file" name="ImageFile" class="form-control" />
+                <span class="text-muted small">Atleast 1 featured image is recommended.</span>
+                <span asp-validation-for="ImageUrl" class="text-danger small"></span>
             </div>
+
             <div class="form-group mb-3">
                 <label asp-for="Content" class="control-label mb-2"></label>
                 <input type="hidden" asp-for="Content" id="Content" />

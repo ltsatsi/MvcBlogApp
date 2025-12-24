@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="card-footer bg-white border-top d-flex gap-3">
-                    @if (Model.AuthorId == Guid.Parse(ViewBag.UserId))
+                    @if (Model.AuthorId == ViewBag.UserId)
                     {
                         <a asp-action="Edit" asp-route-id="@Model?.BlogId" class="btn btn-primary btn-sm">Edit</a>
                     }
@@ -96,7 +96,7 @@
                                     <strong>@comment.Author.FirstName @comment.Author.LastName</strong> <span class="text-muted">· @comment.CreatedAt.ToString("MMM dd, yyyy")</span>
                                 </div>
 
-                                @if(comment.AuthorId == Guid.Parse(ViewBag.UserId))
+                                @if(comment.AuthorId == ViewBag.UserId)
                                 {
                                     <a asp-action="Delete" asp-controller="Comment"
                                        asp-route-id="@comment.CommentId"

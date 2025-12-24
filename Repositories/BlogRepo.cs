@@ -60,8 +60,9 @@ namespace MyBlogApplication.Repositories
         {
             var blog = await _context.Blogs
                 .Include(b => b.Comments)
-                .ThenInclude(b => b.Author)
+                .Include(b => b.Author)
                 .FirstOrDefaultAsync(p => p.BlogId == id);
+
             return blog;
         }
 

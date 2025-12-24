@@ -16,6 +16,7 @@
 			<th>@Html.DisplayNameFor(m => m.RoleName)</th>
 			<th>@Html.DisplayNameFor(m => m.Email)</th>
 			<th>@Html.DisplayNameFor(m => m.CreatedOn)</th>
+			<th class="text-end">Actions</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -27,6 +28,11 @@
 				<td>@(item.RoleName ?? "<None>")</td>
 				<td><a href="mailto:@item.Email">@item.Email</a></td>
 				<td>@item.CreatedOn</td>
+				<td class="text-end">
+					<a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-outline-dark btn-sm">Edit</a>
+					<a asp-action="Details" asp-route-id="@item.UserId" class="btn btn-primary btn-sm">Details</a>
+					<a asp-action="Delete" asp-route-id="@item.UserId" class="btn btn-danger btn-sm">Delete</a>
+				</td>
 			</tr>
 		}
 	</tbody>

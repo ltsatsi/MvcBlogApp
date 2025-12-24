@@ -116,5 +116,122 @@ namespace MyBlogApplication.Controllers
             await signInManager.SignOutAsync();
             return RedirectToAction(nameof(Index), "Home");
         }
+
+        // Get: /Account/Edit
+        [HttpGet("Edit")]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            ViewBag.UserId = userManager.GetUserId(HttpContext.User);
+            var user = await userManager.FindByIdAsync(id.ToString());
+
+            if (user is null)
+                return NotFound();
+
+            var model = new UserViewModel()
+            {
+                UserId = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                RoleName = user.RoleName,
+                CreatedOn = user.CreatedOn
+            };
+
+            return View(model);
+        }
+
+        // Post: /Account/Edit
+        [HttpPost("Edit")]
+        public async Task<IActionResult> Edit(UserViewModel model)
+        {
+            var user = await userManager.FindByIdAsync(model.UserId.ToString());
+
+            if (user is null)
+                return NotFound();
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+
+            await userManager.SetEmailAsync(user, model.Email);
+            await userManager.SetUserNameAsync(user, model.Email);
+
+            user.RoleName = model.RoleName;
+
+            // Audit Columns
+            user.CreatedOn = model.CreatedOn;
+            user.ModifiedOn = DateTime.UtcNow;
+
+            var result = await userManager.UpdateAsync(user);
+
+            if(result.Succeeded)
+                return RedirectToAction(nameof(Index));
+
+            return View(model);
+        }
+
+
+
+        // Get: /Account/Details
+        [HttpGet("Details"), Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var user = await userManager.FindByIdAsync(id.ToString());
+
+            if (user is null)
+                return NotFound();
+
+            var model = new UserViewModel()
+            {
+                UserId = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                RoleName = user.RoleName,
+                CreatedOn = user.CreatedOn
+            };
+
+            return View(model);
+        }
+
+
+
+        // Get: /Account/Delete
+        [HttpGet("Delete"), Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var user = await userManager.FindByIdAsync(id.ToString());
+
+            if (user is null)
+                return NotFound();
+
+            var model = new UserViewModel()
+            {
+                UserId = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                RoleName = user.RoleName,
+                CreatedOn = user.CreatedOn
+            };
+
+            return View(model);
+        }
+
+        // Post: /Account/Delete
+        [HttpPost("Delete"), Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(UserViewModel model)
+        {
+            var user = await userManager.FindByIdAsync(model.UserId.ToString());
+
+            if (user is null) 
+                return NotFound();
+
+            var result = await userManager.DeleteAsync(user);
+
+            if (result.Succeeded)
+                return RedirectToAction(nameof(Index));
+
+            return View(model);
+        }
     }
 }

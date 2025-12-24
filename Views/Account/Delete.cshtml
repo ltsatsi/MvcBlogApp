@@ -1,7 +1,7 @@
 ﻿@model MyBlogApplication.ViewModel.UserViewModel
 
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "Delete";
 }
 
 <div class="container mt-5">
@@ -50,11 +50,14 @@
 
     <!-- Footer Actions -->
     <div class="mt-4">
-        <a asp-action="Index" asp-controller="Home" class="btn btn-secondary btn-sm">
-            ← Back to Home
-        </a>
-        <a asp-action="Edit" asp-route-id="@Model.UserId" asp-controller="Account" class="btn btn-outline-primary btn-sm">
-            Edit
-        </a>
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="UserId"/>
+            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary btn-sm">
+                ← Back to Home
+            </a>
+            <button type="submit" asp-action="Delete" asp-controller="Account" class="btn btn-outline-danger btn-sm">
+                Delete
+            </button>
+        </form>
     </div>
 </div>

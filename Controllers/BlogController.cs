@@ -58,6 +58,8 @@ namespace MyBlogApplication.Controllers
         [HttpGet("create")]
         public IActionResult Create()
         {
+            ViewBag.UserId = Guid.Parse(_userManager.GetUserId(HttpContext.User) ?? 
+                throw new Exception("No user found"));
             ViewBag.ShowButton = true;
             return View(new Blog());
         }
@@ -75,14 +77,15 @@ namespace MyBlogApplication.Controllers
 
                 return View(blog);
             }
-
+            
             return View(blog);
         }
 
         [HttpGet("details-default/{id}")]
-        public async Task<IActionResult> DetailsDefault(int id) 
+        public async Task<IActionResult> DetailsDefault(int id)
         {
-            ViewBag.UserId = _userManager.GetUserId(HttpContext.User);
+            ViewBag.UserId = Guid.Parse(_userManager.GetUserId(HttpContext.User) ??
+                throw new Exception("No user found"));
             var model = await _blogRepo.GetBlogByIdAsync(id);
             return View("Details", model);
         }
@@ -90,7 +93,8 @@ namespace MyBlogApplication.Controllers
         [HttpGet("details-query")]
         public async Task<IActionResult> DetailsQuery([FromQuery(Name = "id")] int id)
         {
-            ViewBag.UserId = _userManager.GetUserId(HttpContext.User);
+            ViewBag.UserId = Guid.Parse(_userManager.GetUserId(HttpContext.User) ??
+                throw new Exception("No user found"));
             var model = await _blogRepo.GetBlogByIdAsync(id);
             return View("Details", model);
         }
@@ -105,6 +109,8 @@ namespace MyBlogApplication.Controllers
         [HttpGet("edit")]
         public async Task<IActionResult> Edit(int id)
         {
+            ViewBag.UserId = Guid.Parse(_userManager.GetUserId(HttpContext.User) ??
+                throw new Exception("No user found"));
             ViewBag.ShowButton = true;
             var model = await _blogRepo.GetBlogByIdAsync(id);
             return View(model);

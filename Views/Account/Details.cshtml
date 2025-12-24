@@ -1,14 +1,14 @@
 ﻿@model MyBlogApplication.ViewModel.UserViewModel
 
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "Account Details";
 }
 
 <div class="container mt-5">
     <!-- Page Header -->
     <div class="mb-4">
         <h3 class="fw-semibold mb-1">@ViewData["Title"]</h3>
-        <p class="text-muted mb-0">Signed-in account information</p>
+        <p class="text-muted mb-0">User account information</p>
     </div>
 
     <!-- Profile Card -->
@@ -54,7 +54,7 @@
             ← Back to Home
         </a>
         <a asp-action="Edit" asp-route-id="@Model.UserId" asp-controller="Account" class="btn btn-outline-primary btn-sm">
-            Edit
+           Update
         </a>
     </div>
 </div>
