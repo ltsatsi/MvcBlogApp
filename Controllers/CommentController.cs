@@ -27,7 +27,7 @@ namespace MyBlogApplication.Controllers
             return View(PaginatedList<Comment>.Create(await _commentRepo.GetAllCommentsAsync(sortOrder), pageNumber ?? 1, pageSize));
         }
 
-        [HttpGet, Authorize(Roles = "Admin")]
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
             ViewBag.ShowButton = true;
@@ -35,7 +35,7 @@ namespace MyBlogApplication.Controllers
             return View(model);
         }
 
-        [HttpPost, Authorize(Roles = "Admin")]
+        [HttpPost]
         public async Task<IActionResult> Delete(Comment comment)
         {
             ViewBag.ShowButton = false;

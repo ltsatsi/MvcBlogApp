@@ -4,45 +4,59 @@
 	ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+	<div class="card shadow-sm border-0" style="width: 420px;">
+		<div class="card-body p-4">
 
-<div class="col-4">
-	<h4>Register an account</h4>
-	<hr />
-	<form asp-action="Register" method="post">
-		<div asp-validation-summary="ModelOnly"></div>
+			<h4 class="fw-semibold mb-1">Create an account</h4>
+			<p class="text-muted small mb-4">
+				The fisrt step to becoming a developer author
+			</p>
 
-		<div class="form-group">
-			<label asp-for="FirstName" class="form-label"></label>
-			<input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
-			<span asp-validation-for="FirstName" class="text-danger"></span>
+
+			<form asp-action="Register" method="post">
+				<div asp-validation-summary="ModelOnly"></div>
+
+				<div class="row">
+					<div class="col-6">
+						<label asp-for="FirstName" class="form-label"></label>
+						<input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+						<span asp-validation-for="FirstName" class="text-danger"></span>
+					</div>
+
+					<div class="col-6">
+						<label asp-for="LastName" class="form-label"></label>
+						<input asp-for="LastName" class="form-control" placeholder="Last name (optional)" />
+						<span asp-validation-for="LastName" class="text-danger"></span>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label asp-for="Email" class="form-label"></label>
+					<input asp-for="Email" class="form-control" placeholder="Enter email" />
+					<span asp-validation-for="Email" class="text-danger"></span>
+				</div>
+
+				<div class="form-group">
+					<label asp-for="Password" class="form-label"></label>
+					<input asp-for="Password" class="form-control" placeholder="Enter password" />
+					<span asp-validation-for="Password" class="text-danger"></span>
+				</div>
+
+				<div class="form-group">
+					<label asp-for="ConfirmPassword" class="form-label"></label>
+					<input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm password" />
+					<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+				</div>
+
+
+				<div class="my-3 text-center">
+					<small>Already have an account? <a asp-action="Login" asp-controller="Account">Sign In!</a></small>
+				</div>
+
+				<button type="submit" class="btn btn-primary w-100 mt-2">Register</button>
+			</form>
+
 		</div>
-
-		<div class="form-group">
-			<label asp-for="LastName" class="form-label"></label>
-			<input asp-for="LastName" class="form-control" placeholder="Last name (optional)" />
-			<span asp-validation-for="LastName" class="text-danger"></span>
-		</div>
-
-		<div class="form-group">
-			<label asp-for="Email" class="form-label"></label>
-			<input asp-for="Email" class="form-control" placeholder="Enter email" />
-			<span asp-validation-for="Email" class="text-danger"></span>
-		</div>
-
-		<div class="form-group">
-			<label asp-for="Password" class="form-label"></label>
-			<input asp-for="Password" class="form-control" placeholder="Enter password" />
-			<span asp-validation-for="Password" class="text-danger"></span>
-		</div>
-
-		<div class="form-group">
-			<label asp-for="ConfirmPassword" class="form-label"></label>
-			<input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm password" />
-			<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-		</div>
-
-		<button type="submit" class="btn btn-primary">Register</button>
-	</form>
-
+	</div>
 </div>

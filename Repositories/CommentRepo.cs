@@ -53,8 +53,8 @@ namespace MyBlogApplication.Repositories
         public async Task<Comment> GetCommentByIdAsync(int id)  
         {
             var comment = await _context.Comments
+                .Include(c => c.Author)
                 .Include(c => c.Blog)
-                .ThenInclude(c => c.Author)
                 .FirstOrDefaultAsync(c => c.CommentId == id);
             return comment;
         }

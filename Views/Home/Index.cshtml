@@ -1,8 +1,105 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+
+    <!-- Hero Section -->
+    <div class="rounded-4 p-5 mb-5 shadow-sm"
+         style="background: linear-gradient(135deg, #f3f6fb, #ffffff);">
+
+        <div class="row align-items-center">
+            <div class="col-md-7">
+
+                <span class="badge bg-primary bg-opacity-10 text-primary mb-3 px-3">
+                    Bloggin Application
+                </span>
+
+                <h1 class="display-5 fw-semibold mt-3">
+                    Build. Learn. Share.
+                </h1>
+
+                <p class="lead text-muted mt-3 mb-4">
+                    A modern, developer-focused bloggin web application built with
+                    ASP.NET Core Mvc, Identity, and Entity Framework Core.
+                </p>
+
+                <div class="d-flex gap-3">
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a class="btn btn-outline-primary btn-sm"
+                               asp-controller="Admin"
+                               asp-action="Index">
+                                Dashboard
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Blog" asp-action="Create"
+                               class="btn btn-outline-primary btn-sm px-4">
+                                New Article
+                            </a>
+                        }
+                    }else
+                    {
+
+                        <a asp-controller="Account" asp-action="Register"
+                           class="btn btn-primary btn-sm px-4">
+                            Get Started
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <div class="col-md-5 d-none d-md-flex justify-content-center">
+                <div class="rounded-circle bg-primary bg-opacity-10 d-flex
+                        align-items-center justify-content-center"
+                     style="width: 220px; height: 220px;">
+                    <span class="display-6 fw-bold text-primary">
+                        MVC
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Feature Section -->
+    <div class="row text-center">
+        <div class="col-md-4 mb-2">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold">Clean Architecture</h5>
+                    <p class="card-text text-muted">
+                        Built using ASP.NET Core MVC, Identity, and Entity Framework Core.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-2">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold">Authentication</h5>
+                    <p class="card-text text-muted">
+                        Secure login, registration, and role-based authorization.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-2">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold">Real Content</h5>
+                    <p class="card-text text-muted">
+                        Practical articles written by a developer, for developers.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

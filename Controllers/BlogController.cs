@@ -55,7 +55,7 @@ namespace MyBlogApplication.Controllers
             return View(PaginatedList<Blog>.Create(await _blogRepo.GetAllBlogsAsync(searchInput, sortOrder), pageNumber ?? 1, pageSize));
         }
 
-        [HttpGet("create"), Authorize(Roles = "Editor")]
+        [HttpGet("create")]
         public IActionResult Create()
         {
             ViewBag.ShowButton = true;
@@ -63,7 +63,7 @@ namespace MyBlogApplication.Controllers
         }
 
 
-        [HttpPost("create"), Authorize(Roles = "Editor")]
+        [HttpPost("create")]
         public async Task<IActionResult> Create(Blog blog, IFormFile imageFile)
         {
             if (ModelState.IsValid)
@@ -79,7 +79,7 @@ namespace MyBlogApplication.Controllers
             return View(blog);
         }
 
-        [HttpGet("details-default/{id}"), Authorize]
+        [HttpGet("details-default/{id}")]
         public async Task<IActionResult> DetailsDefault(int id) 
         {
             ViewBag.UserId = _userManager.GetUserId(HttpContext.User);
@@ -87,7 +87,7 @@ namespace MyBlogApplication.Controllers
             return View("Details", model);
         }
 
-        [HttpGet("details-query"), Authorize]
+        [HttpGet("details-query")]
         public async Task<IActionResult> DetailsQuery([FromQuery(Name = "id")] int id)
         {
             ViewBag.UserId = _userManager.GetUserId(HttpContext.User);
@@ -95,14 +95,14 @@ namespace MyBlogApplication.Controllers
             return View("Details", model);
         }
 
-        [HttpPost("details-form"), Authorize]
+        [HttpPost("details-form")]
         public async Task<IActionResult> DetailsForm([FromForm] int id)
         {
             var model = await _blogRepo.GetBlogByIdAsync(id);
             return RedirectToAction(nameof(DetailsDefault), new { id });
         }
 
-        [HttpGet("edit"), Authorize(Roles = "Editor")]
+        [HttpGet("edit")]
         public async Task<IActionResult> Edit(int id)
         {
             ViewBag.ShowButton = true;
@@ -110,7 +110,7 @@ namespace MyBlogApplication.Controllers
             return View(model);
         }
 
-        [HttpPost("edit"), Authorize(Roles = "Editor")]
+        [HttpPost("edit")]
         public async Task<IActionResult> Edit(Blog blog, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
@@ -129,7 +129,7 @@ namespace MyBlogApplication.Controllers
             return View(blog);
         }
 
-        [HttpGet("delete"), Authorize(Roles = "Admin")]
+        [HttpGet("delete")]
         public async Task<IActionResult> Delete(int id)
         {
             ViewBag.ShowButton = true;
@@ -137,7 +137,7 @@ namespace MyBlogApplication.Controllers
             return View(model);
         }
 
-        [HttpPost("delete"), Authorize(Roles = "Admin")]
+        [HttpPost("delete")]
         public async Task<IActionResult> Delete(Blog blog)
         {
             ViewBag.ShowButton = false;
@@ -147,7 +147,7 @@ namespace MyBlogApplication.Controllers
         }
 
 
-        [HttpPost, Authorize]  
+        [HttpPost]  
         public async Task<IActionResult> AddComment(int blogId, string authorId, string content)
         {
             if (ModelState.IsValid)
